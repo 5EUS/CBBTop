@@ -1,0 +1,57 @@
+# Build results
+bin/
+obj/
+out/
+AppPackages/
+BundleArtifacts/
+TestResults/
+
+# Avalonia-specific
+*.axaml.cs
+*.g.cs
+*.g.i.cs
+
+# Avalonia build artifacts (from Avalonia XAML compiler)
+.g/
+Generated/
+
+# Rider and VS Code
+.idea/
+.vscode/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# DotCover and ReSharper
+*.dotCover
+.ReSharper*/
+*.DotSettings.user
+
+# NuGet
+*.nupkg
+*.snupkg
+packages/
+*.nuspec
+project.lock.json
+project.assets.json
+*.deps.json
+
+# Logs
+*.log
+
+# Others
+*.db
+*.sqlite
+*.bak
+*.cache
+*.tmp
+*.tmp.*
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# git-ignored local config
+appsettings.Development.json
