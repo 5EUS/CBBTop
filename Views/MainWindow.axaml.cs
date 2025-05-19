@@ -24,8 +24,8 @@ public partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
-        _consoleWindow = new ConsoleWindow();
         _engineManager = new EngineManager();
+        _consoleWindow = new ConsoleWindow(_engineManager.Send);
         _displayBoardInput = new DisplayBoardInput(_engineManager);
 
         _engineManager.OnEngineOutput += (output) =>
@@ -38,6 +38,7 @@ public partial class MainWindow : Window
         };
 
         AddKeybinding(Key.F1, () => OpenEngine_Click(this, null));
+        AddKeybinding(Key.F2, () => CloseEngine_Click(this, null));
         AddKeybinding(Key.Q, () => Exit_Click(this, null), KeyModifiers.Control);
         AddKeybinding(Key.D, () => DisplayBoard_Click(this, null), KeyModifiers.Control);
         AddKeybinding(Key.A, () => GetAttack_Click(this, null), KeyModifiers.Control);
@@ -68,6 +69,11 @@ public partial class MainWindow : Window
         var path = await OpenWindowGetFilePath();
         _engineManager.Start(path);
 
+    }
+
+    private void CloseEngine_Click(object? sender, RoutedEventArgs? e)
+    {
+        _engineManager.Stop();
     }
 
     private async Task<string> OpenWindowGetFilePath()
@@ -176,7 +182,11 @@ public partial class MainWindow : Window
         if (!string.IsNullOrEmpty(path))
         {
             _consoleWindow?.Log($"Engine log file: {path}");
-            LogManager.RunPythonScript(path);
+            var pythonWindow = new ConsoleWindow(null);
+
+            pythonWindow.Show();
+            LogManager.RunPythonScript(path, pythonWindow);
+            
         }
         else
         {
@@ -188,7 +198,7 @@ public partial class MainWindow : Window
     {
         if (_consoleWindow == null || _consoleWindow.IsVisible == false)
         {
-            _consoleWindow = new ConsoleWindow();
+            _consoleWindow = new ConsoleWindow(_engineManager.Send);
         }
         _consoleWindow.Show();
     }

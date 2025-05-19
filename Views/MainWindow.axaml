@@ -20,6 +20,7 @@
         <Menu DockPanel.Dock="Top">
             <MenuItem Header="_File">
                 <MenuItem Header="Open Engine" InputGesture="F1" Click="OpenEngine_Click"/>
+                <MenuItem Header="Close Engine" InputGesture="F2" Click="CloseEngine_Click"/>
                 <MenuItem Header="Exit" InputGesture="Ctrl+Q" Click="Exit_Click"/>
             </MenuItem>
             <MenuItem Header="_Commands">

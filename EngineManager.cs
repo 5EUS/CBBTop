@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 namespace CBBTop;
 public class EngineManager
 {
-    private Process _engineProcess;
+    private Process? _engineProcess;
     private StreamWriter _input;
     private StreamReader _output;
 
@@ -70,5 +70,21 @@ public class EngineManager
         }
         _input.WriteLine(command);
         _input.Flush();
+    }
+
+    public void Stop()
+    {
+        if (_engineProcess != null && !_engineProcess.HasExited)
+        {
+            Send("");
+            _engineProcess.Kill();
+            _engineProcess.Dispose();
+            _engineProcess = null;
+            OnEngineOutput?.Invoke("Engine stopped.");
+        }
+        else
+        {
+            OnEngineOutput?.Invoke("Engine is not running.");
+        }
     }
 }

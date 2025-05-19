@@ -8,7 +8,7 @@
         x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/CBBTop.ico"
         Title="CBBTop - Console"
-        Width="800" Height="400">
+        Width="1000" Height="400">
 
     <DockPanel Margin="4">
 

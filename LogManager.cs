@@ -2,6 +2,8 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using Avalonia.Threading;
+using CBBTop.Views;
 
 namespace CBBTop;
 public static class LogManager
@@ -12,7 +14,10 @@ public static class LogManager
     public static readonly string ProjectRoot = Path.GetFullPath(AppContext.BaseDirectory);
     #endif
     private static readonly string path = Path.Combine(ProjectRoot, "log_viewer.py");
-    public static void RunPythonScript(string scriptPath)
+    private static Process? _process;
+    public static Process? Process => _process; 
+
+    public static void RunPythonScript(string scriptPath, ConsoleWindow window)
     {
         var startInfo = new ProcessStartInfo
         {
@@ -24,13 +29,12 @@ public static class LogManager
             CreateNoWindow = false
         };
 
-        using var process = new Process { StartInfo = startInfo };
-        process.OutputDataReceived += (s, e) => { if (e.Data != null) Console.WriteLine(e.Data); };
-        process.ErrorDataReceived += (s, e) => { if (e.Data != null) Console.Error.WriteLine(e.Data); };
+        _process = new Process { StartInfo = startInfo };
+        _process.OutputDataReceived += (s, e) => { if (e.Data != null) Dispatcher.UIThread.Post(() => window.Command(e.Data)); };
+        _process.ErrorDataReceived += (s, e) => { if (e.Data != null) Dispatcher.UIThread.Post(() => window.Command(e.Data)); };
 
-        process.Start();
-        process.BeginOutputReadLine();
-        process.BeginErrorReadLine();
-        process.WaitForExit();
+        _process.Start();
+        _process.BeginOutputReadLine();
+        _process.BeginErrorReadLine();
     }
 }

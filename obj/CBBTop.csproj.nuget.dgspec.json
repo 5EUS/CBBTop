@@ -53,8 +53,6 @@
               "version": "[11.3.0, )"
             },
             "Avalonia.Diagnostics": {
-              "include": "None",
-              "suppressParent": "All",
               "target": "Package",
               "version": "[11.3.0, )"
             },
@@ -395,11 +393,6 @@
             "System.Xml.XPath": "(, 4.3.0]",
             "System.Xml.XPath.XDocument": "(, 5.0.0]"
           }
-        }
-      },
-      "runtimes": {
-        "linux-x64": {
-          "#import": []
         }
       }
     }
