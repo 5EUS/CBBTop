@@ -1,0 +1,54 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:CBBTop.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="1280" d:DesignHeight="720"
+        x:Class="CBBTop.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Icon="/Assets/CBBTop.ico"
+        Title="CBBTop"
+        Width="1280" Height="720">
+
+    <Design.DataContext>
+        <!-- This only sets the DataContext for the previewer in an IDE,
+             to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
+        <vm:MainWindowViewModel/>
+    </Design.DataContext>
+
+    <DockPanel>
+        <Menu DockPanel.Dock="Top">
+            <MenuItem Header="_File">
+                <MenuItem Header="Open Engine" InputGesture="F1" Click="OpenEngine_Click"/>
+                <MenuItem Header="Exit" InputGesture="Ctrl+Q" Click="Exit_Click"/>
+            </MenuItem>
+            <MenuItem Header="_Commands">
+                <MenuItem Header="Display Board" InputGesture="Ctrl+D" Click="DisplayBoard_Click"/>
+                <MenuItem Header="Get Attack" InputGesture="Ctrl+A" Click="GetAttack_Click"/>
+                <MenuItem Header="Get Magic Index" InputGesture="Ctrl+M" Click="GetMagicIndex_Click"/>
+                <MenuItem Header="Get Permutation Index" InputGesture="Ctrl+P" Click="GetPermIndex_Click"/>
+                <MenuItem Header="Help" InputGesture="Ctrl+H" Click="Help_Click"/>
+                <MenuItem Header="Run Sliding Test" InputGesture="Ctrl+T" Click="RunSlidingTest_Click"/>
+                <MenuItem Header="Get Sliding Attack" InputGesture="Ctrl+S" Click="GetSlidingAttack_Click"/>    
+                <MenuItem Header="Toggle Timer" InputGesture="Shift+T" Click="ToggleTimer_Click"/>
+                <MenuItem Header="Run Unit Tests" InputGesture="T" Click="UnitTests_Click"/>
+            </MenuItem>
+            <MenuItem Header="_Settings">
+                <MenuItem Header="Engine Settings" Click="EngineSettings_Click"/>
+                <MenuItem Header="Board Settings" Click="BoardSettings_Click"/>
+                <MenuItem Header="Theme Settings" Click="ThemeSettings_Click"/>
+            </MenuItem>
+            <MenuItem Header="_Tools">
+                <MenuItem Header="Engine Log" InputGesture="Ctrl+L" Click="EngineLog_Click"/>
+                <MenuItem Header="Console" InputGesture="Ctrl+C" Click="Console_Click"/>
+            </MenuItem>    
+            <MenuItem Header="_Help">
+                <MenuItem Header="About" Click="About_Click"/>
+            </MenuItem>
+        </Menu>
+            
+        <Image Source="/Assets/chessboard.png"
+               IsHitTestVisible="False" />
+    </DockPanel> 
+
+</Window>

@@ -1,0 +1,31 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:CBBTop.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="120"
+        x:Class="CBBTop.Views.DisplayAttackInput"
+        x:DataType="vm:AttackViewModel"
+        Icon="/Assets/CBBTop.ico"
+        Title="CBBTop - Display an attack"
+        Width="300" Height="200">
+
+    <StackPanel Margin="10" Spacing="8">
+        <TextBox x:Name="BitboardInput"
+                Width="300"
+                Watermark="Enter a ulong" />
+        <TextBox x:Name="SquareInput"
+                Width="300"
+                Watermark="Enter a square" />
+        <ComboBox
+                ItemsSource="{Binding AvailablePieceTypes}"
+                SelectedItem="{Binding SelectedPieceType}"
+                Margin="8"
+                Width="150"/> 
+        <Button Content="Enter"
+                Width="120"
+                HorizontalAlignment="Center"
+                Click="ViewBitboard_Click" />                
+    </StackPanel>    
+
+</Window>    

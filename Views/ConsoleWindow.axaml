@@ -1,0 +1,41 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:CBBTop.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="400"
+        x:Class="CBBTop.Views.ConsoleWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Icon="/Assets/CBBTop.ico"
+        Title="CBBTop - Console"
+        Width="800" Height="400">
+
+    <DockPanel Margin="4">
+
+        <!-- Command Input spans full width -->
+        <TextBox x:Name="CommandInput"
+                 DockPanel.Dock="Bottom"
+                 KeyDown="CommandInput_KeyDown"
+                 Watermark="Enter command..."
+                 HorizontalAlignment="Stretch"
+                 VerticalAlignment="Bottom"
+                 Margin="0"
+                 />
+
+        <!-- Console Output -->
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <TextBox x:Name="ConsoleBox"
+                     IsReadOnly="True"
+                     AcceptsReturn="True"
+                     FontFamily="Consolas"
+                     Background="Black"
+                     Foreground="Lime"
+                     BorderThickness="0"
+                     Padding="4"
+                     TextWrapping="Wrap"/>
+        </ScrollViewer>
+
+    </DockPanel>
+</Window>
+
+           
