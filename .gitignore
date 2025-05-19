@@ -7,7 +7,6 @@ BundleArtifacts/
 TestResults/
 
 # Avalonia-specific
-*.axaml.cs
 *.g.cs
 *.g.i.cs
 
