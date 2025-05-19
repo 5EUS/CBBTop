@@ -46,7 +46,7 @@ public class EngineManager
         _output = _engineProcess.StandardOutput;
 
         Task.Run(ReadOutputLoop);
-        OnEngineOutput?.Invoke("Connected to engine at " + path);
+        OnEngineOutput?.Invoke("Connecting to engine at " + path);
     }
 
     private async Task ReadOutputLoop()

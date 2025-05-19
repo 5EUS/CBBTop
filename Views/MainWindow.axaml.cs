@@ -78,7 +78,6 @@ public partial class MainWindow : Window
 
     private async Task<string> OpenWindowGetFilePath()
     {
-               // Request file(s) from user
         var files = await StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
         {
             Title = "Open Engine Executable",
@@ -87,7 +86,7 @@ public partial class MainWindow : Window
             [
                 new FilePickerFileType("Executable")
                 {
-                    Patterns = ["*.exe", "*.bin", "*.out", "*"]
+                    Patterns = ["*.exe", "*.bin", "*.out", "*.*"]
                 }
             ]
         });
@@ -182,7 +181,7 @@ public partial class MainWindow : Window
         if (!string.IsNullOrEmpty(path))
         {
             _consoleWindow?.Log($"Engine log file: {path}");
-            var pythonWindow = new ConsoleWindow(null);
+            var pythonWindow = new ConsoleWindow(Console.WriteLine);
 
             pythonWindow.Show();
             LogManager.RunPythonScript(path, pythonWindow);
