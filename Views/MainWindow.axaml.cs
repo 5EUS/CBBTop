@@ -1,107 +1,48 @@
 using System;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
-using Avalonia;
-using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
-using Avalonia.Platform.Storage;
-using Avalonia.Threading;
 using CBBTop.ViewModels;
-using CommunityToolkit.Mvvm.Input;
 using MsBox.Avalonia;
 
 namespace CBBTop.Views;
 
-public partial class MainWindow : Window
+public partial class MainWindow : CBBWindow
 {
 
-    private ConsoleWindow? _consoleWindow;
-    private EngineManager _engineManager;
-    private DisplayBoardInput? _displayBoardInput;
+    private MainWindowViewModel ViewModel => (DataContext as MainWindowViewModel)!;
 
     public MainWindow()
     {
         InitializeComponent();
-        _engineManager = new EngineManager();
-        _consoleWindow = new ConsoleWindow(_engineManager.Send);
-        _displayBoardInput = new DisplayBoardInput(_engineManager);
 
-        _engineManager.OnEngineOutput += (output) =>
-        {
-            Dispatcher.UIThread.Post(() =>
-            {
-                _consoleWindow?.Log(output);
-                DisplayBoardInput.TryExtractBitboardAndShow(output);
-            });
-        };
-
-        AddKeybinding(Key.F1, () => OpenEngine_Click(this, null));
-        AddKeybinding(Key.F2, () => CloseEngine_Click(this, null));
-        AddKeybinding(Key.Q, () => Exit_Click(this, null), KeyModifiers.Control);
-        AddKeybinding(Key.D, () => DisplayBoard_Click(this, null), KeyModifiers.Control);
-        AddKeybinding(Key.A, () => GetAttack_Click(this, null), KeyModifiers.Control);
-        AddKeybinding(Key.M, () => GetMagicIndex_Click(this, null), KeyModifiers.Control);
-        AddKeybinding(Key.P, () => GetPermIndex_Click(this, null), KeyModifiers.Control);
-        AddKeybinding(Key.H, () => Help_Click(this, null), KeyModifiers.Control);
-        AddKeybinding(Key.T, () => RunSlidingTest_Click(this, null), KeyModifiers.Control);
-        AddKeybinding(Key.S, () => GetSlidingAttack_Click(this, null), KeyModifiers.Control);
-        AddKeybinding(Key.T, () => ToggleTimer_Click(this, null), KeyModifiers.Shift);
-        AddKeybinding(Key.T, () => UnitTests_Click(this, null));
-        AddKeybinding(Key.C, () => Console_Click(this, null), KeyModifiers.Control);
-        AddKeybinding(Key.L, () => EngineLog_Click(this, null), KeyModifiers.Control);
+        var binder = new Keybinds(KeyBindings);
+        binder.AddKeyBinding(Key.F2, () => CloseEngine_Click(this, null));
+        binder.AddKeyBinding(Key.Q, () => Exit_Click(this, null), KeyModifiers.Control);
+        binder.AddKeyBinding(Key.D, () => DisplayBoard_Click(this, null), KeyModifiers.Control);
+        binder.AddKeyBinding(Key.A, () => GetAttack_Click(this, null), KeyModifiers.Control);
+        binder.AddKeyBinding(Key.M, () => GetMagicIndex_Click(this, null), KeyModifiers.Control);
+        binder.AddKeyBinding(Key.P, () => GetPermIndex_Click(this, null), KeyModifiers.Control);
+        binder.AddKeyBinding(Key.H, () => Help_Click(this, null), KeyModifiers.Control);
+        binder.AddKeyBinding(Key.T, () => RunSlidingTest_Click(this, null), KeyModifiers.Control);
+        binder.AddKeyBinding(Key.S, () => GetSlidingAttack_Click(this, null), KeyModifiers.Control);
+        binder.AddKeyBinding(Key.T, () => ToggleTimer_Click(this, null), KeyModifiers.Shift);
+        binder.AddKeyBinding(Key.T, () => UnitTests_Click(this, null));
+        binder.AddKeyBinding(Key.C, () => Console_Click(this, null), KeyModifiers.Control);
+        binder.AddKeyBinding(Key.L, () => EngineLog_Click(this, null), KeyModifiers.Control);
+        binder.AddKeyBinding(Key.F1, () => OpenEngine_Click(this, null));
  
-    }
-
-    private void AddKeybinding(Key key, Action action, KeyModifiers? modifiers = null)
-    {
-        KeyBindings.Add(new KeyBinding
-        {
-            Gesture = new KeyGesture(key, modifiers ?? KeyModifiers.None),
-            Command = new RelayCommand(action)
-        });
     }
 
     private async void OpenEngine_Click(object? sender, RoutedEventArgs? e)
     {
-        
-        var path = await OpenWindowGetFilePath();
-        _engineManager.Start(path);
-
+        ViewModel.ConsoleWindow?.Show();
+        var path = await OpenWindowGetFilePath("Open Engine Executable");
+        ViewModel.EngineManager.Start(path);
     }
 
     private void CloseEngine_Click(object? sender, RoutedEventArgs? e)
     {
-        _engineManager.Stop();
-    }
-
-    private async Task<string> OpenWindowGetFilePath()
-    {
-        var files = await StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
-        {
-            Title = "Open Engine Executable",
-            AllowMultiple = false,
-            FileTypeFilter =
-            [
-                new FilePickerFileType("Executable")
-                {
-                    Patterns = ["*.exe", "*.bin", "*.out", "*.*"]
-                }
-            ]
-        });
-
-        if (files.Any())
-        {
-            var file = files[0];
-            var path = file.Path?.LocalPath;
-
-            if (!string.IsNullOrEmpty(path))
-            {
-                return path;
-            }
-        } 
-        return string.Empty;
+        ViewModel.EngineManager.Stop();
     }
 
     private void Exit_Click(object? sender, RoutedEventArgs? e)
@@ -118,16 +59,16 @@ public partial class MainWindow : Window
 
     private void DisplayBoard_Click(object? sender, RoutedEventArgs? e)
     {
-        if (_displayBoardInput == null || _displayBoardInput.IsVisible == false)
+        if (ViewModel.DisplayBoardInput == null || ViewModel.DisplayBoardInput.IsVisible == false)
         {
-            _displayBoardInput = new DisplayBoardInput(_engineManager);
+            ViewModel.DisplayBoardInput = new DisplayBoardInput();
         }
-        _displayBoardInput.Show();
+        ViewModel.DisplayBoardInput.Show();
     }
 
     private void GetAttack_Click(object? sender, RoutedEventArgs? e)
     {
-        var display = new DisplayAttackInput(_engineManager, "/getattack ", () =>
+        var display = new DisplayAttackInput(ViewModel.EngineManager, "/getattack ", () =>
         {
         }, new AttackViewModel());
         display.Show();
@@ -136,88 +77,86 @@ public partial class MainWindow : Window
     private void GetMagicIndex_Click(object? sender, RoutedEventArgs? e)
     {
         Console.WriteLine("Get Magic Index clicked");
-        _consoleWindow?.Log("Get Magic Index clicked");
+        ViewModel.ConsoleWindow?.Log("Get Magic Index clicked");
     }
 
     private void GetPermIndex_Click(object? sender, RoutedEventArgs? e)
     {
         Console.WriteLine("Get Perm Index clicked");
-        _consoleWindow?.Log("Get Perm Index clicked");
+        ViewModel.ConsoleWindow?.Log("Get Perm Index clicked");
     }
 
     private void RunSlidingTest_Click(object? sender, RoutedEventArgs? e)
     {
         Console.WriteLine("Run Sliding Test clicked");
-        _consoleWindow?.Log("Run Sliding Test clicked");
+        ViewModel.ConsoleWindow?.Log("Run Sliding Test clicked");
     }
 
     private void ToggleTimer_Click(object? sender, RoutedEventArgs? e)
     {
         Console.WriteLine("Toggle Timer clicked");
-        _consoleWindow?.Log("Toggle Timer clicked");
+        ViewModel.ConsoleWindow?.Log("Toggle Timer clicked");
     }
 
     private void EngineSettings_Click(object? sender, RoutedEventArgs e)
     {
         Console.WriteLine("Engine Settings clicked");
-        _consoleWindow?.Log("Engine Settings clicked");
+        ViewModel.ConsoleWindow?.Log("Engine Settings clicked");
     }
 
     private void BoardSettings_Click(object? sender, RoutedEventArgs e)
     {
         Console.WriteLine("Board Settings clicked");
-        _consoleWindow?.Log("Board Settings clicked");
+        ViewModel.ConsoleWindow?.Log("Board Settings clicked");
     }
 
     private void ThemeSettings_Click(object? sender, RoutedEventArgs e)
     {
         Console.WriteLine("Theme Settings clicked");
-        _consoleWindow?.Log("Theme Settings clicked");
+        ViewModel.ConsoleWindow?.Log("Theme Settings clicked");
     }
 
     private async void EngineLog_Click(object? sender, RoutedEventArgs? e)
     {
-        var path = await OpenWindowGetFilePath();
+        var path = await OpenWindowGetFilePath("Open Engine Log File");
         if (!string.IsNullOrEmpty(path))
         {
-            _consoleWindow?.Log($"Engine log file: {path}");
-            var pythonWindow = new ConsoleWindow(Console.WriteLine);
-
-            pythonWindow.Show();
-            LogManager.RunPythonScript(path, pythonWindow);
-            
+            ViewModel.ConsoleWindow?.Log($"Engine log file: {path}");
+            var window = new LogViewerWindow(path);
+            window.LoadLogFile();
+            window.Show();
         }
         else
         {
-            _consoleWindow?.Log("No file selected.");
+            ViewModel.ConsoleWindow?.Log("No file selected.");
         }
     }
 
     private void Console_Click(object? sender, RoutedEventArgs? e)
     {
-        if (_consoleWindow == null || _consoleWindow.IsVisible == false)
+        if (ViewModel.ConsoleWindow == null || ViewModel.ConsoleWindow.IsVisible == false)
         {
-            _consoleWindow = new ConsoleWindow(_engineManager.Send);
+            ViewModel.ConsoleWindow = new ConsoleWindow(ViewModel.EngineManager.Send);
         }
-        _consoleWindow.Show();
+        ViewModel.ConsoleWindow.Show();
     }
 
     private void GetSlidingAttack_Click(object? sender, RoutedEventArgs? e)
     {
         Console.WriteLine("Get Sliding Attack clicked");
-        _consoleWindow?.Log("Get Sliding Attack clicked");
+        ViewModel.ConsoleWindow?.Log("Get Sliding Attack clicked");
     }
 
     private void Help_Click(object? sender, RoutedEventArgs? e)
     {
         Console.WriteLine("Help clicked");
-        _consoleWindow?.Log("Help clicked");
+        ViewModel.ConsoleWindow?.Log("Help clicked");
     }
 
     private void UnitTests_Click(object? sender, RoutedEventArgs? e)
     {
         Console.WriteLine("Unit Tests clicked");
-        _consoleWindow?.Log("Unit Tests clicked");
+        ViewModel.ConsoleWindow?.Log("Unit Tests clicked");
     }
 
 }

@@ -7,43 +7,45 @@ namespace CBBTop.Views;
 public partial class DisplayBoardInput : Window
 {
 
-    private EngineManager _engineManager;
-    private string _command = "/displayboard ";
-    public DisplayBoardInput(EngineManager engineManager)
+    public DisplayBoardInput()
     {
-        _engineManager = engineManager;
+        var binder = new Keybinds(KeyBindings);
+        binder.AddKeyBinding(Avalonia.Input.Key.Enter, () => ViewBitboard_Click(this, null));
         InitializeComponent();
 
     }
 
-    private void ViewBitboard_Click(object? sender, RoutedEventArgs e)
+    private void ViewBitboard_Click(object? sender, RoutedEventArgs? e)
     {
         var command = BitboardInput.Text?.Trim();
         if (!string.IsNullOrEmpty(command))
         {
-            _engineManager.Send(_command + command);
+            if (!TryExtractBitboardAndShow(command))
+            {
+                BitboardInput.Text = "Invalid bitboard format. Please enter a valid hex string.";
+                return;
+            }
             BitboardInput.Text = string.Empty;
         }
     }
 
-    public static void TryExtractBitboardAndShow(string output)
+    public static bool TryExtractBitboardAndShow(string output)
     {
-        var match = MyRegex().Match(output);
-        if (match.Success)
-        {
-            string value = match.Groups[1].Value;
+        var match = HexRegex().Match(output);
 
-            if (ulong.TryParse(value.StartsWith("0x") ? value[2..] : value,
-                            NumberStyles.HexNumber,
-                            CultureInfo.InvariantCulture,
-                            out ulong bitboard))
-            {
-                var window = new BitboardWindow(bitboard);
-                window.Show();
-            }
-        }
+        if (!match.Success)
+            return false;
+
+        string hexPart = match.Groups[2].Value;
+        if (!ulong.TryParse(hexPart, NumberStyles.HexNumber, null, out var value))
+            return false;
+
+        var window = new BitboardWindow(value);
+        window.Show();
+        window.Title += " - " + hexPart;
+        return true;
     }
 
-    [GeneratedRegex(@"bitboard:\s*(0x[0-9a-fA-F]+|\d+)")]
-    private static partial Regex MyRegex();
+    [GeneratedRegex(@"^(0x)?([0-9a-fA-F]+)$")]
+    private static partial Regex HexRegex();
 }

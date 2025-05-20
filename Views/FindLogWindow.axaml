@@ -1,0 +1,72 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:CBBTop.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="1280" d:DesignHeight="720"
+        x:Class="CBBTop.Views.FindLogWindow"
+        x:DataType="vm:AttackViewModel"
+        Icon="/Assets/CBBTop.ico"
+        Title="CBBTop - Log Search"
+        Width="1280" Height="720">
+
+    <StackPanel Margin="16" Spacing="12">
+
+        <TextBlock Text="Piece:"/>
+        <ComboBox x:Name="PieceSelector"
+                Width="200"
+                HorizontalAlignment="Left"
+                ItemsSource="{Binding AvailablePieceTypes}"
+                SelectedItem="{Binding SelectedPieceType}" />
+
+        <TextBlock Text="Square # (optional if using ID):"/>
+        <TextBox x:Name="SquareNumberInput"
+                 Width="200"
+                HorizontalAlignment="Left"
+                 Watermark="Enter square number*" />
+
+        <TextBlock Text="Square ID:"/>
+        <TextBox x:Name="SquareIdInput"
+                 Width="200"
+                HorizontalAlignment="Left"
+                 Watermark="Enter a square ID e.g. e4" />
+
+        <TextBlock Text="Permutation:"/>
+        <TextBox x:Name="PermutationInput"
+                 Width="200"
+                HorizontalAlignment="Left"
+                 Watermark="Enter permutation value" />
+
+        <TextBlock Text="Index:"/>
+        <TextBox x:Name="IndexInput"
+                 Width="200"
+                HorizontalAlignment="Left"
+                 Watermark="Enter index value" />
+
+        <TextBlock Text="Mode:"/>
+        <ComboBox x:Name="ModeSelector"
+                  Width="200"
+                HorizontalAlignment="Left"
+                  SelectedIndex="0">
+            <ComboBoxItem Content="perm"/>
+            <ComboBoxItem Content="index"/>
+        </ComboBox>
+
+        <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Center">
+            <Button Content="Prev" Click="OnPrev_Click" Width="70"/>
+            <Button Content="Next" Click="OnNext_Click" Width="70"/>
+            <Button Content="Show" Click="OnShow_Click" Width="70"/>
+            <Button Content="Exit" Click="OnExit_Click" Width="70"/>
+        </StackPanel>
+
+        <TextBox x:Name="FindInput"
+                 KeyDown="Find_KeyDown"
+                 Watermark="Enter a search term..."
+                 HorizontalAlignment="Stretch"
+                 VerticalAlignment="Bottom"
+                 Margin="0"
+                 />
+
+    </StackPanel>
+
+</Window>

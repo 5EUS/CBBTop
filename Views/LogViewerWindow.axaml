@@ -1,0 +1,37 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:CBBTop.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="800"
+        x:Class="CBBTop.Views.LogViewerWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Icon="/Assets/CBBTop.ico"
+        Title="CBBTop - Bitboard"
+        Width="800" Height="800">
+
+    <DockPanel>
+        <Menu DockPanel.Dock="Top">
+            <MenuItem Header="_File">
+                <MenuItem Header="Open" InputGesture="F1" Click="Open_Click"/>
+                <MenuItem Header="Search" InputGesture="F2" Click="Search_Click"/>
+                <MenuItem Header="Clear" InputGesture="F3" Click="Clear_Click"/>
+                <MenuItem Header="Exit" InputGesture="Ctrl+Q" Click="Exit_Click"/>
+            </MenuItem> 
+        </Menu>
+
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <TextBox x:Name="LogBox"
+                     IsReadOnly="True"
+                     AcceptsReturn="True"
+                     TextWrapping="Wrap"
+                     Background="Black"
+                     Foreground="White"
+                     FontFamily="Consolas"
+                     FontSize="12"
+                     BorderThickness="0"
+                     Padding="6" />
+        </ScrollViewer>
+    </DockPanel>
+
+</Window>
