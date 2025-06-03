@@ -2,6 +2,10 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
+using CBBL.src.Board;
+using CBBL.src.Implementation;
+using CBBL.src.Interfaces;
+using CBBL.src.Util;
 
 namespace CBBTop;
 public class EngineManager
@@ -10,9 +14,17 @@ public class EngineManager
     private StreamWriter _input;
     private StreamReader _output;
 
+    public IBoard? Board { get; private set; }
+
     public event Action<string>? OnEngineOutput;
 
-    public void Start(string path)
+    public EngineManager()
+    {
+        Context.Register(new CBBLServiceLoader());
+        Context.Instance.Init();
+    }
+
+    public void Start(string path, string[]? args = null)
     {
 
         if (_engineProcess != null && !_engineProcess.HasExited)
@@ -24,7 +36,7 @@ public class EngineManager
         if (path == null || !File.Exists(path))
         {
             OnEngineOutput?.Invoke("Engine path is invalid.");
-            return; 
+            return;
         }
 
         _engineProcess = new Process
@@ -47,6 +59,30 @@ public class EngineManager
 
         Task.Run(ReadOutputLoop);
         OnEngineOutput?.Invoke("Connecting to engine at " + path);
+    }
+
+    public IBoard Start()
+    {
+        Board = new CBBLBoard();
+       
+        OnEngineOutput?.Invoke("Console engine started. Type commands to interact.");
+        return Board;
+    }
+
+    public IBoard Start(string fen)
+    {
+        Board = new CBBLBoard(fen);
+
+        OnEngineOutput?.Invoke("Console engine started with FEN: " + fen);
+        return Board;
+    }
+
+    public IBoard Start(PlayerColor color)
+    {
+        Board = new CBBLBoard(color);
+
+        OnEngineOutput?.Invoke("Console engine started with player color: " + color);
+        return Board;
     }
 
     private async Task ReadOutputLoop()

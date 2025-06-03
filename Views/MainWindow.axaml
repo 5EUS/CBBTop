@@ -19,8 +19,9 @@
     <DockPanel>
         <Menu DockPanel.Dock="Top">
             <MenuItem Header="_File">
-                <MenuItem Header="Open Engine" InputGesture="F1" Click="OpenEngine_Click"/>
-                <MenuItem Header="Close Engine" InputGesture="F2" Click="CloseEngine_Click"/>
+                <MenuItem Header="New Game" InputGesture="F1" Click="NewGame_Click"/>
+                <MenuItem Header="Open Engine" InputGesture="F2" Click="OpenEngine_Click"/>
+                <MenuItem Header="Close Engine" InputGesture="F3" Click="CloseEngine_Click"/>
                 <MenuItem Header="Exit" InputGesture="Ctrl+Q" Click="Exit_Click"/>
             </MenuItem>
             <MenuItem Header="_Commands">
@@ -33,6 +34,7 @@
                 <MenuItem Header="Get Sliding Attack" InputGesture="Ctrl+S" Click="GetSlidingAttack_Click"/>    
                 <MenuItem Header="Toggle Timer" InputGesture="Shift+T" Click="ToggleTimer_Click"/>
                 <MenuItem Header="Run Unit Tests" InputGesture="T" Click="UnitTests_Click"/>
+                <MenuItem Header="Undo" InputGesture="U" Click="Undo_Click"/>
             </MenuItem>
             <MenuItem Header="_Settings">
                 <MenuItem Header="Engine Settings" Click="EngineSettings_Click"/>
@@ -47,9 +49,34 @@
                 <MenuItem Header="About" Click="About_Click"/>
             </MenuItem>
         </Menu>
-            
-        <Image Source="/Assets/chessboard.png"
-               IsHitTestVisible="False" />
+    
+        <Viewbox Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <Grid Width="1000" Height="1000">        
+                <Grid Name="ChessBoard" Margin="0" ShowGridLines="False">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                </Grid>
+            </Grid>    
+        </Viewbox>    
+
     </DockPanel> 
 
 </Window>

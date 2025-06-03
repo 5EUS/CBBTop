@@ -54,3 +54,5 @@ desktop.ini
 
 # git-ignored local config
 appsettings.Development.json
+
+logs/

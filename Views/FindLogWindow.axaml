@@ -59,6 +59,13 @@
             <Button Content="Exit" Click="OnExit_Click" Width="70"/>
         </StackPanel>
 
+        <TextBox x:Name="OutputBox"
+                 Watermark="Output"
+                 HorizontalAlignment="Stretch"
+                 VerticalAlignment="Bottom"
+                 Margin="0"
+                 />
+
         <TextBox x:Name="FindInput"
                  KeyDown="Find_KeyDown"
                  Watermark="Enter a search term..."

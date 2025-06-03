@@ -1,4 +1,3 @@
-using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using CBBTop.ViewModels;
@@ -8,12 +7,14 @@ using System.IO;
 using System.Linq;
 
 namespace CBBTop.Views;
+
 public partial class LogViewerWindow : CBBWindow
 {
 
     private string _path;
     private List<string>? _logLines;
     private Dictionary<string, Dictionary<int, Dictionary<int, AttackLogParser.AttackEntry>>>? _parsedPairs;
+    private Dictionary<string, Dictionary<int, Dictionary<int, int>>>? byIndex;
     private readonly int MaxLogLines = 15_000;
 
     public LogViewerWindow(string path)
@@ -41,10 +42,41 @@ public partial class LogViewerWindow : CBBWindow
                             .Reverse()
                             .Take(MaxLogLines)
                             .Reverse()
-                            .ToList(); 
+                            .ToList();
 
             LogBox.Text = string.Join(Environment.NewLine, _logLines);
             _parsedPairs = AttackLogParser.ParseLog(_logLines);
+            byIndex = [];
+            foreach (var pair in _parsedPairs)
+            {
+                var piece = pair.Key;
+                var attacks = pair.Value;
+                byIndex[piece] = [];
+                foreach (var attack in attacks)
+                {
+                    var square = attack.Key;
+                    var entries = attack.Value;
+                    byIndex[piece][square] = [];
+                    foreach (var entry in entries)
+                    {
+                        var index = entry.Key;
+                        var attackEntry = entry.Value;
+                        if (attackEntry.Index == null)
+                        {
+                            return;
+                        }
+                        if (!byIndex[piece].ContainsKey(square))
+                        {
+                            byIndex[piece][square] = new Dictionary<int, int>();
+                        }
+                        if (!byIndex[piece][square].ContainsKey(index))
+                        {
+                            byIndex[piece][square][index] = 0;
+                        }
+                        byIndex[piece][square][index] = (int)attackEntry.Index;
+                    }
+                }
+            }
         }
         catch (Exception ex)
         {
@@ -77,11 +109,11 @@ public partial class LogViewerWindow : CBBWindow
 
     private void Search_Click(object? sender, RoutedEventArgs? e)
     {
-        if (_logLines == null || _parsedPairs == null)
+        if (_logLines == null || _parsedPairs == null || byIndex == null)
         {
             return;
         }
-        var window = new FindLogWindow(_logLines, _parsedPairs, new AttackViewModel());
+        var window = new FindLogWindow(_logLines, _parsedPairs, byIndex, new AttackViewModel());
         window.Show();
     }
 

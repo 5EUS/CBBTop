@@ -1,32 +1,16 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using CBBL.src.Pieces;
 
 namespace CBBTop.ViewModels;
-
-
-public enum PieceType
-{
-    None,
-    WhitePawn,
-    BlackPawn,
-    WhiteKnight,
-    BlackKnight,
-    WhiteBishop,
-    BlackBishop,
-    WhiteRook,
-    BlackRook,
-    WhiteQueen,
-    BlackQueen,
-    WhiteKing,
-    BlackKing,
-}
-
 
 public class AttackViewModel : ViewModelBase
 {
     public ObservableCollection<PieceType> AvailablePieceTypes { get; } =
         new ObservableCollection<PieceType>(Enum.GetValues<PieceType>().Cast<PieceType>());
+
+    public Action<PieceType>? OnPieceSelected { get; set; }
 
     private PieceType _selectedPieceType;
     public PieceType SelectedPieceType
@@ -35,8 +19,9 @@ public class AttackViewModel : ViewModelBase
         set => RaiseAndSetIfChanged(ref _selectedPieceType, value);
     }
 
-    private static void RaiseAndSetIfChanged(ref PieceType selectedPieceType, PieceType value)
+    private void RaiseAndSetIfChanged(ref PieceType selectedPieceType, PieceType value)
     {
+        OnPieceSelected?.Invoke(value);
         selectedPieceType = value;
     }
 }
