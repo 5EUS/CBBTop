@@ -3,12 +3,12 @@
         xmlns:vm="using:CBBTop.ViewModels"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="120"
+        mc:Ignorable="d" d:DesignWidth="1280" d:DesignHeight="720"
         x:Class="CBBTop.Views.DisplayBoardInput"
         x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/CBBTop.ico"
-        Title="CBBTop - Display a Bitboard"
-        Width="300" Height="120">
+        Title="CBBTop - View a Bitboard"
+        Width="1280" Height="720">
 
     <StackPanel Margin="10" Spacing="8">
         <TextBox x:Name="BitboardInput"

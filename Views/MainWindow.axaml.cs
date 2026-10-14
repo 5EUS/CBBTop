@@ -46,7 +46,7 @@ public partial class MainWindow : CBBWindow
     {
         ViewModel.ConsoleWindow?.Show();
         var path = await OpenWindowGetFilePath("Open Engine Executable");
-        ViewModel.EngineManager.Start(path);
+        ViewModel.EngineManager.Start(path, 3);
     }
 
     private void CloseEngine_Click(object? sender, RoutedEventArgs? e)
@@ -216,9 +216,10 @@ public partial class MainWindow : CBBWindow
 
     private int _selectedSquare = 1;
     private Dictionary<Border, IBrush?> _selectedBorders = [];
+    private (Border, IBrush)? _checkBorder = null;
     private Color selectedColor = new(245, 252, 32, 150);
 
-    public void OnSquareClicked(object? sender, PointerPressedEventArgs? e)
+    public async void OnSquareClicked(object? sender, PointerPressedEventArgs? e)
     {
         if (sender is Border border && border.Tag is int square)
         {
@@ -240,6 +241,24 @@ public partial class MainWindow : CBBWindow
                     {
                         board.ExecuteMove(move);
                         board.State.UpdateMoves();
+                        DrawChessBoard(board);
+                        DrawCheck(move, board.State);
+                        if (ViewModel.EngineManager.AIPlayer == null)
+                            return;
+                        var move2 = await ViewModel.EngineManager.AIPlayer.GetBestMoveAsync();  
+                        if (move2 != null)
+                        {
+                            board.ExecuteMove(move2.Value);
+                            board.State.UpdateMoves();
+                            DrawChessBoard(board);
+                            DrawCheck(move2.Value, board.State);
+                            return;
+                        }
+                        else
+                        {
+                            var win = MessageBoxManager.GetMessageBoxStandard("You win!", "Congratulations, you have obliterated my ultimate AI algorithm. You must be a prodigy...");
+                            await win.ShowAsPopupAsync(this);
+                        }
                         break;
                     }
                 }
@@ -249,7 +268,9 @@ public partial class MainWindow : CBBWindow
 
         newsquare:
             _selectedSquare = square;
-            if (ChessBoard.Children[square] is Border selectedBorder)
+            if (ChessBoard.Children[square] is Border selectedBorder
+                && !_selectedBorders.ContainsKey(selectedBorder)
+                && _checkBorder?.Item1 != selectedBorder)
             {
                 _selectedBorders.Add(selectedBorder, selectedBorder.Background);
                 selectedBorder.Background = new SolidColorBrush(selectedColor);
@@ -261,13 +282,32 @@ public partial class MainWindow : CBBWindow
                 {
                     if (ChessBoard.Children[move.ToSquare] is Border moveBoarder)
                     {
-                        if (_selectedBorders.ContainsKey(moveBoarder))
+                        if (_selectedBorders.ContainsKey(moveBoarder) || _checkBorder?.Item1 == moveBoarder)
                             continue;
                         _selectedBorders.Add(moveBoarder, moveBoarder.Background);
                         moveBoarder.Background = new SolidColorBrush(selectedColor);
                     }
                 }
             }
+        }
+    }
+
+    private void DrawCheck(Move move, BoardState state)
+    {
+        ClearCheckHighlights();
+        if (!move.Flag.HasFlag(MoveFlag.Check)) return;
+
+        var square = state.ColorToMove == PlayerColor.White 
+            ? state.GetBitboardFor(PieceType.WhiteKing) : state.GetBitboardFor(PieceType.BlackKing);
+
+        int square_int = BoardOps.GetLSB(square);    
+
+        if (ChessBoard.Children[square_int] is Border checkBorder)
+        {
+            if (_checkBorder != null)
+                return;
+            _checkBorder = new(checkBorder, checkBorder.Background);
+            checkBorder.Background = new SolidColorBrush(Colors.Red);    
         }
     }
 
@@ -278,6 +318,15 @@ public partial class MainWindow : CBBWindow
             border.Background = _selectedBorders[border];
         }
         _selectedBorders.Clear();
+    }
+
+    private void ClearCheckHighlights()
+    {
+        if (_checkBorder != null)
+        {
+            _checkBorder.Value.Item1.Background = _checkBorder.Value.Item2;
+            _checkBorder = null;
+        }
     }
 
     private void Undo_Click(object? sender, RoutedEventArgs? e)

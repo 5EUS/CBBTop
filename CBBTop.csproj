@@ -32,7 +32,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="CBBL" Version="0.0.146" />
+    <PackageReference Include="CBBL" Version="0.1.31" />
   </ItemGroup>
 
 </Project>

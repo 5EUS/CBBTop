@@ -2,10 +2,12 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
+using CBBL.src.AI;
 using CBBL.src.Board;
 using CBBL.src.Implementation;
 using CBBL.src.Interfaces;
 using CBBL.src.Util;
+using CBBTop.AI;
 
 namespace CBBTop;
 public class EngineManager
@@ -14,7 +16,8 @@ public class EngineManager
     private StreamWriter _input;
     private StreamReader _output;
 
-    public IBoard? Board { get; private set; }
+    public IBoard? Board { get; set; }
+    public IAIPlayer? AIPlayer { get; set; }
 
     public event Action<string>? OnEngineOutput;
 
@@ -61,25 +64,30 @@ public class EngineManager
         OnEngineOutput?.Invoke("Connecting to engine at " + path);
     }
 
-    public IBoard Start()
+    public IBoard Start(int depth = 3)
     {
         Board = new CBBLBoard();
+        AIPlayer = new Player(Board.State, PlayerColor.Black, depth);
        
         OnEngineOutput?.Invoke("Console engine started. Type commands to interact.");
         return Board;
     }
 
-    public IBoard Start(string fen)
+    public IBoard Start(string fen, int depth = 3)
     {
         Board = new CBBLBoard(fen);
+        var opposite = Board.State.ActivePlayer == PlayerColor.White ? PlayerColor.Black : PlayerColor.White;
+        AIPlayer = new Player(Board.State, opposite, depth);
 
         OnEngineOutput?.Invoke("Console engine started with FEN: " + fen);
         return Board;
     }
 
-    public IBoard Start(PlayerColor color)
+    public IBoard Start(PlayerColor color, int depth = 3)
     {
         Board = new CBBLBoard(color);
+        var opposite = color == PlayerColor.White ? PlayerColor.Black : PlayerColor.White;
+        AIPlayer = new Player(Board.State, opposite, depth);
 
         OnEngineOutput?.Invoke("Console engine started with player color: " + color);
         return Board;

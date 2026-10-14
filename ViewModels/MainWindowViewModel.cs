@@ -47,6 +47,6 @@ public partial class MainWindowViewModel : ViewModelBase
 
     private static Bitmap GetImageForPieceType(PieceType pieceType)
     {
-        return new Bitmap("Images/" + pieceType.ToString().ToLowerInvariant() + ".png");
+        return new Bitmap("Assets/Images/" + pieceType.ToString().ToLowerInvariant() + ".png");
     }
 }

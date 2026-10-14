@@ -28,7 +28,8 @@ public class MainWindowCallbacks(IBoard board, Action<IBoard> onBitboardMutation
 
     public void OnBitboardMutation(string mutationType, PieceType? piece, int? fromSquare, int? toSquare, PieceType? promotedTo = null)
     {
-        OnBitboardMutationAction?.Invoke(Board);
+        // if (mutationType.Equals("undo"))
+            OnBitboardMutationAction?.Invoke(Board);
     }
 
     public void OnPieceMoved(PieceType piece, int fromSquare, int toSquare)
